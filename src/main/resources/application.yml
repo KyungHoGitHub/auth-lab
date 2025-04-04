@@ -1,0 +1,40 @@
+# init project
+spring:
+  application:
+    name: auth-service
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  # database setting
+  datasource:
+    url: jdbc:h2:mem:test:db
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  h2:
+    console:
+      enabled: true
+
+# application.yml
+jwt:
+  secret: 78B354F83E36BBF47958A658899A978B354F83E36BBF47958A658899A9
+  expiration: 3600000
+  refresh-expiration: 7200000
+  issuer: test-user
+
+server:
+  port: 8081
+
+logging:
+  level:
+    root: info
+  charset:
+    console: UTF-8
