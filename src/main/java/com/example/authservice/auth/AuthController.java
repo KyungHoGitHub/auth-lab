@@ -3,6 +3,7 @@ package com.example.authservice.auth;
 import com.example.authservice.config.JwtUtill;
 import com.example.authservice.utill.UserContext;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,6 +13,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.concurrent.TimeUnit;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
@@ -19,6 +22,7 @@ public class AuthController {
 
     private final JwtUtill jwtUtill;
 
+    private final RedisTemplate<String, String> redisTemplate;
 //    private final UserDetailsService userService;
 
     private final CustomUserDetailService customUserDetailService;
@@ -46,7 +50,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<AuthResponseDto>> login(@RequestBody LoginRequestDto requestDto) {
-//        User userInfo = UserContext.getUser();
+
         UserDetails user = customUserDetailService.loadUserByUsername(requestDto.getUserId());
 
         Authentication authentication = authenticationManager.authenticate(
@@ -57,6 +61,8 @@ public class AuthController {
                 .accessToken(jwtUtill.generateAccessToken(user.getUsername()))
                 .refreshToken(jwtUtill.generateRefreshToken(user.getUsername()))
                 .build();
+
+        redisTemplate.opsForValue().set("ACCESS:"+ requestDto.getUserId() , result.getAccessToken(),3 , TimeUnit.HOURS);
 
         return ResponseEntity.ok(ApiResponse.success(result,"Token generated successfully"));
     }

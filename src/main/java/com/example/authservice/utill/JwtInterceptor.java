@@ -18,6 +18,14 @@ public class JwtInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        String path = request.getRequestURI();
+
+        // 회원가입, 로그인 등의 경로는 인증 제외
+        if (path.startsWith("/auth/sign/up") || path.startsWith("/auth/login")) {
+            return true;
+        }
+
+
         String token = request.getHeader("Authorization");
 
         if (token != null && token.startsWith("Bearer ")) {
