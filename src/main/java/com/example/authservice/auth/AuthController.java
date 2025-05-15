@@ -57,14 +57,14 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(requestDto.getUserId(), requestDto.getPassword())
         );
 
-        AuthResponseDto result =  AuthResponseDto.builder()
+        AuthResponseDto result = AuthResponseDto.builder()
                 .accessToken(jwtUtill.generateAccessToken(user.getUsername()))
                 .refreshToken(jwtUtill.generateRefreshToken(user.getUsername()))
                 .build();
 
-        redisTemplate.opsForValue().set("ACCESS:"+ requestDto.getUserId() , result.getAccessToken(),3 , TimeUnit.HOURS);
+        redisTemplate.opsForValue().set("ACCESS:" + requestDto.getUserId(), result.getAccessToken(), 3, TimeUnit.HOURS);
 
-        return ResponseEntity.ok(ApiResponse.success(result,"Token generated successfully"));
+        return ResponseEntity.ok(ApiResponse.success(result, "Token generated successfully"));
     }
 
     @PostMapping("/sign/up")
@@ -74,6 +74,16 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponse.success(users, "success"));
     }
 
+    @PostMapping("duplicate/check/userId")
+    public ResponseEntity<String> checkUserId(@RequestBody String userId) {
+        String res = userServices.checkUserId(userId);
+        if ((res.isEmpty())) {
+
+            return ResponseEntity.ok(res);
+        }
+        return ResponseEntity.badRequest().body("userId is empty");
+    }
+
     @PostMapping("/refresh")
     public ResponseEntity<ApiResponse<AuthResponseDto>> refresh(@RequestParam String refreshToken) {
 
@@ -81,7 +91,7 @@ public class AuthController {
             String username = jwtUtill.generateRefreshToken(jwtUtill.getUsernameFromToken(refreshToken));
             String updateRefreshToken = jwtUtill.generateRefreshToken(username);
             AuthResponseDto authResponseDto = new AuthResponseDto(jwtUtill.generateAccessToken(username), updateRefreshToken);
-            return ResponseEntity.ok(ApiResponse.success(authResponseDto,"success") );
+            return ResponseEntity.ok(ApiResponse.success(authResponseDto, "success"));
         }
         return ResponseEntity.badRequest().body(ApiResponse.failure("refresh token failed"));
     }
@@ -92,8 +102,9 @@ public class AuthController {
         String result = jwtUtill.reissueAccessToken(refreshToken);
         AuthResponseDto data = AuthResponseDto.builder().accessToken(result).build();
 
-        return ResponseEntity.ok().body(ApiResponse.success(data,"access token sucees"));
+        return ResponseEntity.ok().body(ApiResponse.success(data, "access token sucees"));
     }
+
     @PostMapping("/token")
     public String validationToken(@RequestParam String token) {
 

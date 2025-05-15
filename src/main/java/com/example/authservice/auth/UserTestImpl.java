@@ -14,8 +14,15 @@ public class UserTestImpl implements UserService {
 
     @Override
     public User createUser(UserSignUpRequestDto requestDto) {
-        User users = User.builder().userId(requestDto.getUserId()).username(requestDto.getUsername()).password(passwordEncoder.encode(requestDto.getPassword())).build();
-
+        User users = User.builder().userId(requestDto.getUserId()).username(requestDto.getUserName()).password(passwordEncoder.encode(requestDto.getPassword())).email(requestDto.getEmail()).build();
         return userRepository.save(users);
+    }
+
+    @Override
+    public String checkUserId(String userId) {
+        if(userRepository.findByUserId(userId).isPresent()) {
+            return "User already exists";
+        }
+        return "";
     }
 }
