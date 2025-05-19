@@ -1,16 +1,14 @@
 package com.example.authservice.auth;
 
 import com.example.authservice.config.JwtUtill;
-import com.example.authservice.utill.UserContext;
+import com.example.authservice.utill.GlobalResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.TimeUnit;
@@ -68,11 +66,13 @@ public class AuthController {
     }
 
     @PostMapping("/sign/up")
-    public ResponseEntity<ApiResponse<User>> signUp(@RequestBody UserSignUpRequestDto requestDto) {
+    public ResponseEntity<GlobalResponse<UserResponseDto>> signUp(@RequestBody UserSignUpRequestDto requestDto) {
         User users = userServices.createUser(requestDto);
 
-        return ResponseEntity.ok(ApiResponse.success(users, "success"));
+        return GlobalResponse.success(UserResponseDto.toDto(users));
     }
+
+
 
     @PostMapping("duplicate/check/userId")
     public ResponseEntity<String> checkUserId(@RequestBody String userId) {
