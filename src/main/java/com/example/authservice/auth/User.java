@@ -1,10 +1,7 @@
 package com.example.authservice.auth;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Getter
+@Setter
 public class User implements UserDetails {
 
     @Id
