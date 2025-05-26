@@ -24,7 +24,15 @@ public class GlobalResponse<T> {
     public static <T> ResponseEntity<GlobalResponse<T>> success(T data) {
         return ResponseEntity.ok(new GlobalResponse<>(true, "요청성공", data));
     }
+    // 생성 처리 성공 - create 처리
+    public static <T> ResponseEntity<GlobalResponse<T>> successCreate(String message, T data) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(new GlobalResponse<>(true,message,data));
+    }
 
+    // 삭제 처리 성공  - delete 처리
+    public static <T> ResponseEntity<GlobalResponse<T>> successDelete(String message, T data) {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new GlobalResponse<>(true,message,null));
+    }
     // 기본 실패 처리
     public static <T> ResponseEntity<GlobalResponse<T>> fail(String message) {
         return ResponseEntity.badRequest().body(new GlobalResponse<>(false,message,null));

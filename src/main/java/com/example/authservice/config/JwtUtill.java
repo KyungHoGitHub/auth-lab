@@ -53,6 +53,22 @@ public class JwtUtill {
                 .compact();
     }
 
+    public String generateToken(String username, TokenType tokenType ) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + refreshExpirationTime);
+
+        if (tokenType == TokenType.ACCESS_TOKEN) {
+
+        }
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(expiryDate)
+                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
+                .compact();
+    }
+
+
     // JWT 토큰 검증
     public boolean validateToken(String token) {
         try {

@@ -67,9 +67,12 @@ public class AuthController {
 
     @PostMapping("/sign/up")
     public ResponseEntity<GlobalResponse<UserResponseDto>> signUp(@RequestBody UserSignUpRequestDto requestDto) {
-        User users = userServices.createUser(requestDto);
+        User user = userServices.createUser(requestDto);
 
-        return GlobalResponse.success(UserResponseDto.toDto(users));
+        String message = String.format("create success user id  = %s", user.getUserId());
+        UserResponseDto res = UserResponseDto.toDto(user);
+
+        return GlobalResponse.successCreate(message,res);
     }
 
 
@@ -106,11 +109,20 @@ public class AuthController {
     }
 
     @PostMapping("/token")
-    public String validationToken(@RequestParam String token) {
+    public String validationToken(@RequestHeader("Authorization") String token) {
+        final String VALID = "TOKEN_VALID";
+        final String INNVALID = "TOKEN_INVALID";
+        // Bearer <token> 형식에서 실제 토큰만 추출
+        if (token == null || !token.startsWith("Bearer ")) {
+            throw new IllegalArgumentException("Invalid token");
+        }
 
-        boolean result = jwtUtill.validateToken(token);
+        String accessToken = token.substring(7); // 토큰값만 잘라내기
+
+
+        boolean result = jwtUtill.validateToken(accessToken);
         if (result) {
-            return "success";
+            return VALID;
         }
         throw new IllegalArgumentException("Invalid token");
     }
