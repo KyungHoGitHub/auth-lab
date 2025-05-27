@@ -28,7 +28,9 @@ public class JwtUtill {
     private final  JwtProperties jwtProperties;
 
     // JWT 엑세스 토큰 생성
-    public String generateAccessToken(String username) {
+    public String generateAccessToken(String username, Long userIdx) {
+        Claims claims = Jwts.claims().setSubject(username);
+        claims.put("userIdx", userIdx);
         Date now = new Date();
 
         Date expiryDate = new Date(now.getTime() + expirationTime);
@@ -37,6 +39,7 @@ public class JwtUtill {
                 .setSubject(username)
                 .setIssuer(jwtProperties.getIssuer())
                 .setIssuedAt(now)
+                .setClaims(claims)
                 .setExpiration(expiryDate)
                 .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
                 .compact();
@@ -90,7 +93,7 @@ public class JwtUtill {
             // 유저 이름이 필요한데 그건 리프레쉬 토큰에서
             String userName = getUsernameFromToken(refreshToken);
 
-            return generateAccessToken(refreshToken);
+            return generateAccessToken(refreshToken,1L);
 
         }
             throw new IllegalArgumentException();
