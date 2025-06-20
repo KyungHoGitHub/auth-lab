@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.TimeUnit;
@@ -78,14 +79,14 @@ public class AuthController {
 
 
 
-    @PostMapping("duplicate/check/userId")
-    public ResponseEntity<String> checkUserId(@RequestBody String userId) {
+    @PostMapping("duplicate/check/{userId}")
+    public ResponseEntity<String> checkUserId(@PathVariable String userId) {
         String res = userServices.checkUserId(userId);
-        if ((res.isEmpty())) {
+        if (StringUtils.hasText(res)) {
 
-            return ResponseEntity.ok(res);
+            return ResponseEntity.badRequest().body(res);
         }
-        return ResponseEntity.badRequest().body("userId is empty");
+        return ResponseEntity.ok().body("success");
     }
 
     @PostMapping("/refresh")

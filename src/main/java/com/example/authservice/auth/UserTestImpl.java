@@ -21,11 +21,10 @@ public class UserTestImpl implements UserService {
 
     @Override
     public String checkUserId(String userId) {
-//      User<> user =  userRepository.findByUserId(userId)
-//        if(       userRepository.findByUserId(userId)) {
-//            return "User already exists";
-//        }
-
+        boolean isUserIdExists = userRepository.existsByUserId(userId);
+        if (isUserIdExists) {
+            throw new UsernameNotFoundException("Username " + userId + " already exists");
+        }
         return "";
     }
 

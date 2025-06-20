@@ -17,4 +17,14 @@ public class UserController {
     public ResponseEntity<GlobalResponse<UserResponseDto>> user(@PathVariable  Long userIdx) {
         return GlobalResponse.success(UserResponseDto.toDto(userService.getUser(userIdx)));
     }
+
+    @GetMapping("users/me")
+    public ResponseEntity<GlobalResponse<UserResponseDto>> getUserMe() {
+
+    return ResponseEntity.ok().body(null);
+    }
 }
+
+
+
+

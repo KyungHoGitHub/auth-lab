@@ -21,6 +21,7 @@ public class JwtUtill {
 
     @Value("${jwt.expiration}")
     private Long expirationTime;
+    private final long clockSkewSeconds = 30; // 클럭 스큐 30초 허용
 
     @Value("${jwt.refresh-expiration}")
     private Long refreshExpirationTime;
