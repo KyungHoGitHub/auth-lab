@@ -50,7 +50,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<AuthResponseDto>> login(@RequestBody LoginRequestDto requestDto) {
 
-        UserDetails user = customUserDetailService.loadUserByUsername(requestDto.getUserId());
+       UserDetails user = customUserDetailService.loadUserByUsername(requestDto.getUserId());
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(requestDto.getUserId(), requestDto.getPassword())

@@ -1,9 +1,15 @@
 package com.example.authservice.auth;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -13,6 +19,21 @@ public class UserTestImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final RedisTemplate<String, UserInfo> userInfoRedisTemplate;
+
+
+    @PostConstruct
+    public void init() {
+        syncAllUsersToRedis();
+    }
+
+    public void syncAllUsersToRedis(){
+        List<User> users = userRepository.findAll();
+        for (User user : users) {
+            UserInfo userInfo = new UserInfo(user.getIdx(),user.getUserId(),user.getUsername());
+            userInfoRedisTemplate.opsForValue().set("user:"+ user.getUserId(), userInfo,24, TimeUnit.HOURS);
+        }
+    }
     @Override
     public User createUser(UserSignUpRequestDto requestDto) {
         User users = User.builder().userId(requestDto.getUserId()).username(requestDto.getUserName()).password(passwordEncoder.encode(requestDto.getPassword())).email(requestDto.getEmail()).build();
