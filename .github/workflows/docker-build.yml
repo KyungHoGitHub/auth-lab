@@ -28,7 +28,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build the Docker image
-        run: docker build -t auth/server:latest
+        run: docker build -t auth/server:latest .
 
       - name: Push the Docker image
         run: docker push auth/server:latest
