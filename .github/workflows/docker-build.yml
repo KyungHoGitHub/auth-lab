@@ -28,7 +28,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build the Docker image
-        run: docker build -t kyunghoyu/server:latest .
+        run: docker build -t kyunghoyu/app:auth-server .
 
       - name: Push the Docker image
-        run: docker push kyunghoyu/server:latest
+        run: docker push kyunghoyu/app:auth-server
