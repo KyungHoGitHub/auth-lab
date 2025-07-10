@@ -26,19 +26,22 @@ public class JwtUtill {
     @Value("${jwt.refresh-expiration}")
     private Long refreshExpirationTime;
 
-    private final  JwtProperties jwtProperties;
+    private final JwtProperties jwtProperties;
 
     // JWT 엑세스 토큰 생성
-    public String generateAccessToken(String username, Long userIdx) {
-        Claims claims = Jwts.claims().setSubject(username);
-        claims.put("userIdx", userIdx);
+    public String generateAccessToken(String username, Long userIdx, String userId) {
         Date now = new Date();
-
         Date expiryDate = new Date(now.getTime() + expirationTime);
 
+        // 클레임 ( userName, useIdx, userId ) 값 세팅
+        Claims claims = Jwts.claims()
+                .setSubject(username);
+        claims.put("userIdx", userIdx);
+        claims.put("userId", userId);
+
         return Jwts.builder()
-                .setSubject(username)
-                .setIssuer(jwtProperties.getIssuer())
+                .setSubject(username) // 인증 대상 - ex) username, userId
+                .setIssuer(jwtProperties.getIssuer()) // 발급자
                 .setIssuedAt(now)
                 .setClaims(claims)
                 .setExpiration(expiryDate)
@@ -57,7 +60,7 @@ public class JwtUtill {
                 .compact();
     }
 
-    public String generateToken(String username, TokenType tokenType ) {
+    public String generateToken(String username, TokenType tokenType) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + refreshExpirationTime);
 
@@ -88,16 +91,16 @@ public class JwtUtill {
     // refresh 토큰 검증후  access  토큰 재발급
     public String reissueAccessToken(String refreshToken) {
         // refresh 토큰 유효 한지 분기
-        if(validateToken(refreshToken)){
+        if (validateToken(refreshToken)) {
             // 유효하면 엑세스 토큰 발급
 
             // 유저 이름이 필요한데 그건 리프레쉬 토큰에서
             String userName = getUsernameFromToken(refreshToken);
 
-            return generateAccessToken(refreshToken,1L);
+            return generateAccessToken(refreshToken, 1L,"test");
 
         }
-            throw new IllegalArgumentException();
+        throw new IllegalArgumentException();
     }
 
 

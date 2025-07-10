@@ -51,7 +51,7 @@ class JwtUtillTest {
         String username = "testUser";
 
         // ✅ 토큰 생성
-        String token = jwtUtill.generateAccessToken(username);
+        String token = jwtUtill.generateAccessToken(username,12L,"test");
         assertNotNull(token);
 
         // ✅ 토큰 검증 (유효한 경우)

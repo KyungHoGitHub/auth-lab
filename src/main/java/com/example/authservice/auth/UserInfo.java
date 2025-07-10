@@ -13,7 +13,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class UserInfo implements Serializable {
     private  Long userIdx;
-    private String userName;
     private String userId;
-
+    private String userName;
 }

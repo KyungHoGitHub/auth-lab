@@ -66,7 +66,7 @@ public class AuthController {
         User res = userServices.getUserIdx(requestDto.getUserId());
 
         AuthResponseDto result = AuthResponseDto.builder()
-                .accessToken(jwtUtill.generateAccessToken(user.getUsername(), user.getIdx()))
+                .accessToken(jwtUtill.generateAccessToken(user.getUsername(), user.getIdx(),user.getUserId()))
                 .refreshToken(jwtUtill.generateRefreshToken(user.getUsername()))
                 .build();
 
@@ -104,7 +104,7 @@ public class AuthController {
         if (jwtUtill.validateToken(refreshToken)) {
             String username = jwtUtill.generateRefreshToken(jwtUtill.getUsernameFromToken(refreshToken));
             String updateRefreshToken = jwtUtill.generateRefreshToken(username);
-            AuthResponseDto authResponseDto = new AuthResponseDto(jwtUtill.generateAccessToken(username,1L), updateRefreshToken);
+            AuthResponseDto authResponseDto = new AuthResponseDto(jwtUtill.generateAccessToken(username,1L,"test"), updateRefreshToken);
             return ResponseEntity.ok(ApiResponse.success(authResponseDto, "success"));
         }
         return ResponseEntity.badRequest().body(ApiResponse.failure("refresh token failed"));

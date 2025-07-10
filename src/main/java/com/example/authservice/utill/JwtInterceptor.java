@@ -32,7 +32,7 @@ public class JwtInterceptor implements HandlerInterceptor {
             token = token.substring(7); // "Bearer " 제거
             Claims claims = jwtUtill.getClaimsFromToken(token); // JWT 디코딩
 
-            Long userId = claims.get("userId", Long.class);
+            String userId = claims.get("userId", String.class);
             String username = claims.get("sub", String.class);
 
             UserContext.setUser(User.builder().username(username).build()); // ThreadLocal에 저장
