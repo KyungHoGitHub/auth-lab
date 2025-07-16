@@ -25,7 +25,7 @@ public class SecurityConfig {
                 .cors(cors-> cors.configurationSource(corsConfigurationSource))
                 .authorizeHttpRequests((authorizeRequests) -> // 3. 인증, 인가 설정
                         authorizeRequests
-                                .requestMatchers("auth/token","/user/*","/home","auth/sign/up","auth/duplicate/check/**","/h2-console/**","/auth/login", "/auth/refresh").permitAll()
+                                .requestMatchers("auth/token","/user/*","/home","auth/sign/up","auth/duplicate/check/**","/h2-console/**","/auth/login", "swagger-ui/**","v3/api-docs/**","/auth/refresh").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .headers(headers -> headers
