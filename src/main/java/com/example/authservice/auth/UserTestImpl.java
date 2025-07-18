@@ -36,7 +36,13 @@ public class UserTestImpl implements UserService {
     }
     @Override
     public User createUser(UserSignUpRequestDto requestDto) {
-        User users = User.builder().userId(requestDto.getUserId()).username(requestDto.getUserName()).password(passwordEncoder.encode(requestDto.getPassword())).email(requestDto.getEmail()).build();
+        User users = User.builder()
+                .userId(requestDto.getUserId())
+                .username(requestDto.getUserName())
+                .password(passwordEncoder.encode(requestDto.getPassword()))
+                .email(requestDto.getEmail())
+                .role("user")
+                .build();
         return userRepository.save(users);
     }
 
