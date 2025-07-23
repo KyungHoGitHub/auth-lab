@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class UserController {
@@ -22,6 +24,15 @@ public class UserController {
     public ResponseEntity<GlobalResponse<UserResponseDto>> getUserMe() {
 
     return ResponseEntity.ok().body(null);
+    }
+
+    @GetMapping("user/list")
+    public ResponseEntity<UserResponseDto> getUserList(@RequestParam String type,
+                                                             @RequestParam String query
+                                                             ) {
+        UserResponseDto result =  userService.getUserList(type, query);
+
+        return ResponseEntity.ok().body(result);
     }
 }
 

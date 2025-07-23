@@ -64,4 +64,11 @@ public class UserTestImpl implements UserService {
     public User getUserIdx(String userId) {
         return userRepository.findByUserId(userId).orElseThrow(()-> new UsernameNotFoundException(String.valueOf(userId)));
     }
+
+    @Override
+    public UserResponseDto getUserList(String searchBy, String query) {
+        User user = userRepository.findByUsername("abab").orElseThrow(()-> new UsernameNotFoundException("Username   not found"));
+        UserResponseDto response = new UserResponseDto(user.getIdx(),user.getUserId(),user.getUsername(),user.getRole(),user.getCreatedAt(),user.getEmail());
+        return response;
+    }
 }
