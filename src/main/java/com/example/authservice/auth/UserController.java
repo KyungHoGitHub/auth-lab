@@ -27,11 +27,14 @@ public class UserController {
     }
 
     @GetMapping("user/list")
-    public ResponseEntity<UserResponseDto> getUserList(@RequestParam String type,
+    public ResponseEntity<?> getUserList(@RequestParam String type,
                                                              @RequestParam String query
                                                              ) {
+        if(!type.isEmpty() || !query.isEmpty()) {
         UserResponseDto result =  userService.getUserList(type, query);
-
+            return ResponseEntity.ok().body(result);
+        }
+        List<UserResponseDto> result = userService.getUsers();
         return ResponseEntity.ok().body(result);
     }
 }

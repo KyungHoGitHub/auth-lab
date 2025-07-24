@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -21,6 +22,7 @@ public class UserTestImpl implements UserService {
 
     private final RedisTemplate<String, UserInfo> userInfoRedisTemplate;
 
+    private final UserSearchStrategyProvider userSearchStrategyProvider;
 
     @PostConstruct
     public void init() {
@@ -67,8 +69,23 @@ public class UserTestImpl implements UserService {
 
     @Override
     public UserResponseDto getUserList(String searchBy, String query) {
-        User user = userRepository.findByUsername("abab").orElseThrow(()-> new UsernameNotFoundException("Username   not found"));
+        UserColumns column = UserColumns.valueOf(searchBy.toUpperCase());
+
+        User user = userSearchStrategyProvider.getSearchUser(column).getSearchUser(query);
+
         UserResponseDto response = new UserResponseDto(user.getIdx(),user.getUserId(),user.getUsername(),user.getRole(),user.getCreatedAt(),user.getEmail());
+
+        return response;
+    }
+
+    @Override
+    public List<UserResponseDto> getUsers() {
+        List<User> users = userRepository.findAll();
+        // stream() 메서드 사용해서 리스트 데이터 변환
+         List<UserResponseDto> response = userRepository.findAll().stream()
+                 .map(user -> new UserResponseDto(user.getIdx(),user.getUserId(),user.getUsername(),user.getRole(),user.getCreatedAt(),user.getEmail()))
+                 .toList();
+
         return response;
     }
 }

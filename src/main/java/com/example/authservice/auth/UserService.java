@@ -9,4 +9,6 @@ public interface UserService {
    User getUserIdx(String userId);
 
    UserResponseDto getUserList(String searchBy, String query);
+
+   List<UserResponseDto> getUsers();
 }
