@@ -1,0 +1,26 @@
+classDiagram
+
+    class Context {
+        +contextMethod()
+    }
+
+    class LoginStrategy {
+        <<interface>>
+        +login()
+        +loginType()
+    }
+    class IdPasswordStrategy {
+        +login()
+        +loginType()
+    }
+    class KakaoStrategy {
+        +login()
+        +loginType()
+    }
+
+    LoginStrategy <|.. IdPasswordStrategy
+    LoginStrategy <|.. KakaoStrategy
+
+
+    Context --|> LoginStrategy
+

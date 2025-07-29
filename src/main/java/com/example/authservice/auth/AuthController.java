@@ -36,6 +36,7 @@ public class AuthController {
 
     private final UserService userServices;
 
+    private final LoginService loginService;
 
     @Operation(
             summary = "로그인 API",
@@ -57,28 +58,34 @@ public class AuthController {
                     )
             }
     )
+//    @PostMapping("/login")
+//    public ResponseEntity<ApiResponse<AuthResponseDto>> login(@RequestBody LoginRequestDto requestDto) {
+//
+//        // (1) 인증 수행
+//        Authentication authentication = authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(requestDto.getUserId(), requestDto.getPassword())
+//        );
+//
+//        // (2) 인증된 정보로 사용자 데이터 가져오기
+//        CustomUserDetails user= (CustomUserDetails) authentication.getPrincipal();
+//
+//       // (3) 추가 정보 조회 ( idx)
+//        User res = userServices.getUserIdx(requestDto.getUserId());
+//
+//        AuthResponseDto result = AuthResponseDto.builder()
+//                .accessToken(jwtUtill.generateAccessToken(user.getUsername(), user.getIdx(),user.getUserId(),user.getRole()))
+//                .refreshToken(jwtUtill.generateRefreshToken(user.getUsername()))
+//                .build();
+//
+//        // 레디스 엑세스 토큰 저장
+//        redisTemplate.opsForValue().set("ACCESS:" + requestDto.getUserId(), result.getAccessToken(), 3, TimeUnit.HOURS);
+//
+//        return ResponseEntity.ok(ApiResponse.success(result, "Token generated successfully"));
+//    }
+
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<AuthResponseDto>> login(@RequestBody LoginRequestDto requestDto) {
-
-        // (1) 인증 수행
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(requestDto.getUserId(), requestDto.getPassword())
-        );
-
-        // (2) 인증된 정보로 사용자 데이터 가져오기
-        CustomUserDetails user= (CustomUserDetails) authentication.getPrincipal();
-
-       // (3) 추가 정보 조회 ( idx)
-        User res = userServices.getUserIdx(requestDto.getUserId());
-
-        AuthResponseDto result = AuthResponseDto.builder()
-                .accessToken(jwtUtill.generateAccessToken(user.getUsername(), user.getIdx(),user.getUserId(),user.getRole()))
-                .refreshToken(jwtUtill.generateRefreshToken(user.getUsername()))
-                .build();
-
-        // 레디스 엑세스 토큰 저장
-        redisTemplate.opsForValue().set("ACCESS:" + requestDto.getUserId(), result.getAccessToken(), 3, TimeUnit.HOURS);
-
+         AuthResponseDto result = loginService.login(requestDto);
         return ResponseEntity.ok(ApiResponse.success(result, "Token generated successfully"));
     }
 
