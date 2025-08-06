@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +17,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.FieldError;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -84,7 +88,16 @@ public class AuthController {
 //    }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<AuthResponseDto>> login(@RequestBody LoginRequestDto requestDto) {
+    public ResponseEntity<ApiResponse<AuthResponseDto>> login(@Valid @RequestBody LoginRequestDto requestDto ,BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            String errorMessage = Optional.ofNullable(bindingResult.getFieldError())
+                    .map(FieldError::getDefaultMessage)
+                    .orElse("잘못된 요청입니다.");
+
+            return ResponseEntity.badRequest().body(ApiResponse.failure(errorMessage));
+        }
+
          AuthResponseDto result = loginService.login(requestDto);
         return ResponseEntity.ok(ApiResponse.success(result, "Token generated successfully"));
     }
