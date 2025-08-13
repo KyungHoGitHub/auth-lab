@@ -32,3 +32,37 @@ jobs:
 
       - name: Push the Docker image
         run: docker push kyunghoyu/app:auth-server
+
+      - name: Checkout manifest repository
+        uses: actions/checkout@v3
+        with:
+          repository: KyungHoGitHub/auth-service-manifests  # 실제 매니페스트 저장소명으로 변경
+          token: ${{ secrets.MANIFEST_REPO_TOKEN }}
+          path: manifests
+
+      # kustomize 설치
+      - name: Setup Kustomize
+        uses: imranismail/setup-kustomize@v1
+
+      # 매니페스트의 이미지 태그 업데이트 (고정 태그 사용)
+      - name: Update image tag in manifests
+        run: |
+          cd manifests/overlays/production  # 또는 원하는 환경 경로
+          kustomize edit set image kyunghoyu/app=kyunghoyu/app:auth-server
+
+      # 변경사항 커밋 및 푸시
+      - name: Commit and push manifest changes
+        run: |
+          cd manifests
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          
+          # 변경사항이 있는 경우에만 커밋
+          if ! git diff --staged --quiet; then
+            git commit -m "Update auth-service image to auth-server (fixed tag)"
+            git push
+            echo "✅ Manifest updated with image tag: auth-server"
+          else
+            echo "ℹ️ No changes to commit"
+          fi
