@@ -47,7 +47,7 @@ jobs:
       # 매니페스트의 이미지 태그 업데이트 (고정 태그 사용)
       - name: Update image tag in manifests
         run: |
-          cd manifests/overlays/production  # 또는 원하는 환경 경로
+          cd manifests/overlays/dev  # 또는 원하는 환경 경로
           kustomize edit set image kyunghoyu/app=kyunghoyu/app:auth-server
 
       # 변경사항 커밋 및 푸시
