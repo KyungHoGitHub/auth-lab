@@ -1,5 +1,7 @@
 package com.example.authservice.config;
 
+import com.example.authservice.auth.TokenPolicy;
+import com.example.authservice.auth.TokenPolicyCacheService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -26,12 +28,18 @@ public class JwtUtill {
     @Value("${jwt.refresh-expiration}")
     private Long refreshExpirationTime;
 
+    private final TokenPolicyCacheService tokenPolicyCacheService;
+
+
     private final JwtProperties jwtProperties;
 
     // JWT 엑세스 토큰 생성
     public String generateAccessToken(String username, Long userIdx, String userId,String role) {
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + expirationTime);
+
+         Long expTime = tokenPolicyCacheService.getAccessToken(1L);
+        Date expiryDate = new Date(now.getTime() + expTime);
+
 
         // 클레임 ( userName, useIdx, userId ) 값 세팅
         Claims claims = Jwts.claims()

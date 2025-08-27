@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -38,6 +39,8 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
 
+    private final TokenPolicyService tokenPolicyService;
+
     private final UserService userServices;
 
     private final LoginService loginService;
@@ -62,31 +65,6 @@ public class AuthController {
                     )
             }
     )
-//    @PostMapping("/login")
-//    public ResponseEntity<ApiResponse<AuthResponseDto>> login(@RequestBody LoginRequestDto requestDto) {
-//
-//        // (1) 인증 수행
-//        Authentication authentication = authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(requestDto.getUserId(), requestDto.getPassword())
-//        );
-//
-//        // (2) 인증된 정보로 사용자 데이터 가져오기
-//        CustomUserDetails user= (CustomUserDetails) authentication.getPrincipal();
-//
-//       // (3) 추가 정보 조회 ( idx)
-//        User res = userServices.getUserIdx(requestDto.getUserId());
-//
-//        AuthResponseDto result = AuthResponseDto.builder()
-//                .accessToken(jwtUtill.generateAccessToken(user.getUsername(), user.getIdx(),user.getUserId(),user.getRole()))
-//                .refreshToken(jwtUtill.generateRefreshToken(user.getUsername()))
-//                .build();
-//
-//        // 레디스 엑세스 토큰 저장
-//        redisTemplate.opsForValue().set("ACCESS:" + requestDto.getUserId(), result.getAccessToken(), 3, TimeUnit.HOURS);
-//
-//        return ResponseEntity.ok(ApiResponse.success(result, "Token generated successfully"));
-//    }
-
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<AuthResponseDto>> login(@Valid @RequestBody LoginRequestDto requestDto ,BindingResult bindingResult) {
 
@@ -274,5 +252,11 @@ public class AuthController {
             return VALID;
         }
         throw new IllegalArgumentException("Invalid token");
+    }
+
+    @PostMapping("/token-policy")
+    public ResponseEntity<String> createTokenPolicy(@RequestBody TokenPolicyRequestDTO requestDTO, HttpServletRequest request) {
+        tokenPolicyService.createTokenPolicy(requestDTO);
+        return ResponseEntity.ok("success");
     }
 }
