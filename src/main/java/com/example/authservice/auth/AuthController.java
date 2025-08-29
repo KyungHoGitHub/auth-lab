@@ -22,6 +22,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.FieldError;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -29,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 @Tag(name = "Auth", description = "인증 관련 API")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173"})
 public class AuthController {
 
     private final JwtUtill jwtUtill;
@@ -44,6 +46,16 @@ public class AuthController {
     private final UserService userServices;
 
     private final LoginService loginService;
+
+    @PostMapping("google-login")
+    public ResponseEntity<?> googleLogin(@RequestBody GoogleLoginRequest body){
+
+
+        AuthResponseDto authResponseDto = loginService.processGoogleLogin(body);
+
+        System.out.println(authResponseDto);
+        return null;
+    }
 
     @Operation(
             summary = "로그인 API",

@@ -29,6 +29,9 @@ spring:
 #      properties:
 #        spring.json.trusted.packages: com.example.auth-service
 
+google:
+  client-id: ${GOOGLE_CLIENT_ID:780923997453-3ftob69gfdffi9qinnm7rcj5qmfjqk74.apps.googleusercontent.com}
+
   jpa:
     hibernate:
       ddl-auto: update
