@@ -37,6 +37,10 @@ public class User implements UserDetails {
 
     String role;
 
+    LoginType loginType;
+
+    @Column(name= "google_id")
+    String googleId;
     @CreationTimestamp
     @Column(name = "created_at")
     LocalDateTime createdAt;

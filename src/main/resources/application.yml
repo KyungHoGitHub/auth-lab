@@ -15,6 +15,15 @@ spring:
     driver-class-name: org.postgresql.Driver
     username: ykh12
     password: 1234
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
 #
 #  kafka:
 #    bootstrap-servers: localhost:9092
@@ -31,19 +40,6 @@ spring:
 
 google:
   client-id: ${GOOGLE_CLIENT_ID:780923997453-3ftob69gfdffi9qinnm7rcj5qmfjqk74.apps.googleusercontent.com}
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-
-  h2:
-    console:
-      settings:
-        web-allow-others: true
 
 # application.yml
 jwt:

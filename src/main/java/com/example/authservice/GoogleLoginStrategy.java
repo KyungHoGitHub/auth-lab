@@ -1,50 +1,28 @@
-package com.example.authservice.auth;
+package com.example.authservice;
 
+import com.example.authservice.auth.*;
 import com.example.authservice.config.JwtUtill;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-@Service
-public class LoginServiceImpl implements LoginService {
-    private final Map<LoginType, LoginStrategy> strategies;
-
+@Component
+@RequiredArgsConstructor
+public class GoogleLoginStrategy implements LoginStrategy {
     private final GoogleTokenVerifier googleTokenVerifier;
 
     private final UserRepository userRepository;
     private final JwtUtill jwtUtill;
-
-    private static final Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
-
-    public LoginServiceImpl(List<LoginStrategy> strategyList, GoogleTokenVerifier googleTokenVerifier, UserRepository userRepository, JwtUtill jwtUtill) {
-        this.strategies = strategyList.stream()
-                .collect(Collectors.toMap(LoginStrategy::getLoginType, Function.identity()));
-        this.googleTokenVerifier = googleTokenVerifier;
-        this.userRepository = userRepository;
-        this.jwtUtill = jwtUtill;
-    }
+    private static final Logger logger = LoggerFactory.getLogger(GoogleLoginStrategy.class);
 
     @Override
-    public AuthResponseDto login(LoginType loginType, Object data) {
-        LoginStrategy strategy = strategies.get(loginType);
-        if (strategy == null) {
-            throw new IllegalArgumentException("Unknown login type: " + loginType);
-        }
-        return strategy.login(data);
-    }
+    public AuthResponseDto login(Object requestDto) {
+        GoogleLoginData data = (GoogleLoginData) requestDto;
 
-    @Override
-    public AuthResponseDto processGoogleLogin(AuthRequestDto request) {
+
         try {
-            // 1. Google 토큰 검증 및 사용자 정보 추출
-
-
-            GoogleUserInfo googleUserInfo = googleTokenVerifier.verifyAccessTokenAndGetUserInfo(null);
+            GoogleUserInfo googleUserInfo = googleTokenVerifier.verifyAccessTokenAndGetUserInfo(data.getToken());
 
             logger.info("Google login attempt for email: {}", googleUserInfo.getEmail());
 
@@ -62,7 +40,6 @@ public class LoginServiceImpl implements LoginService {
                     user.getRole()
             );
 
-
             return AuthResponseDto.builder()
 
                     .accessToken(accessToken)
@@ -75,7 +52,6 @@ public class LoginServiceImpl implements LoginService {
                     .build();
         }
     }
-
     private User updateExistingUser(User existingUser, GoogleUserInfo googleUserInfo) {
         // 구글 아이디가 없으면 -> 구글 Oauth 아직 미가입자
         if (existingUser.getGoogleId() == null) {
@@ -99,5 +75,9 @@ public class LoginServiceImpl implements LoginService {
         User user = userRepository.save(newUser);
         logger.info("New user created for email: {}", user.getEmail());
         return user;
+    }
+    @Override
+    public LoginType getLoginType() {
+        return LoginType.GOOGLE;
     }
 }

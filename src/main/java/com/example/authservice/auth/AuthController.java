@@ -14,17 +14,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.FieldError;
 
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequiredArgsConstructor
@@ -47,11 +42,13 @@ public class AuthController {
 
     private final LoginService loginService;
 
+    private final LoginDataFactory loginDataFactory;
+
     @PostMapping("google-login")
-    public ResponseEntity<?> googleLogin(@RequestBody GoogleLoginRequest body){
+    public ResponseEntity<?> googleLogin(@RequestBody AuthRequestDto request){
 
 
-        AuthResponseDto authResponseDto = loginService.processGoogleLogin(body);
+        AuthResponseDto authResponseDto = loginService.processGoogleLogin(request);
 
         System.out.println(authResponseDto);
         return null;
@@ -78,17 +75,19 @@ public class AuthController {
             }
     )
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<AuthResponseDto>> login(@Valid @RequestBody LoginRequestDto requestDto ,BindingResult bindingResult) {
+    public ResponseEntity<ApiResponse<AuthResponseDto>> login(@RequestBody AuthRequestDto requestDto ,BindingResult bindingResult) {
+//        if (bindingResult.hasErrors()) {
+//            String errorMessage = Optional.ofNullable(bindingResult.getFieldError())
+//                    .map(FieldError::getDefaultMessage)
+//                    .orElse("잘못된 요청입니다.");
+//
+//            return ResponseEntity.badRequest().body(ApiResponse.failure(errorMessage));
+//        }
 
-        if (bindingResult.hasErrors()) {
-            String errorMessage = Optional.ofNullable(bindingResult.getFieldError())
-                    .map(FieldError::getDefaultMessage)
-                    .orElse("잘못된 요청입니다.");
+        LoginType loginType = requestDto.getLoginType();
+        Object loginData = loginDataFactory.createLoginData(requestDto);
 
-            return ResponseEntity.badRequest().body(ApiResponse.failure(errorMessage));
-        }
-
-         AuthResponseDto result = loginService.login(requestDto);
+         AuthResponseDto result = loginService.login(loginType , loginData);
         return ResponseEntity.ok(ApiResponse.success(result, "Token generated successfully"));
     }
 

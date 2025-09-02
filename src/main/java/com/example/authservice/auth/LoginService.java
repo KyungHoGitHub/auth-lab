@@ -1,7 +1,7 @@
 package com.example.authservice.auth;
 
 public interface LoginService {
-    AuthResponseDto login(LoginRequestDto loginRequestDto);
+    AuthResponseDto login(LoginType loginType, Object data);
 
-    AuthResponseDto processGoogleLogin(GoogleLoginRequest request);
+    AuthResponseDto processGoogleLogin(AuthRequestDto request);
 }

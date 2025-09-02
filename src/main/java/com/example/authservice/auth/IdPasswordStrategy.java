@@ -22,9 +22,11 @@ public class IdPasswordStrategy implements LoginStrategy {
     private final RedisTemplate<String, String> redisTemplate;
 
     @Override
-    public AuthResponseDto login(LoginRequestDto requestDto) {
+    public AuthResponseDto login(Object loginData) {
+        IdPasswordLoginData data = (IdPasswordLoginData) loginData;
+
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(requestDto.getUserId(), requestDto.getPassword())
+                new UsernamePasswordAuthenticationToken(data.getUserId(), data.getPassword())
         );
 
         CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
@@ -34,7 +36,7 @@ public class IdPasswordStrategy implements LoginStrategy {
                 .refreshToken(jwtUtill.generateRefreshToken(user.getUsername()))
                 .build();
 
-        redisTemplate.opsForValue().set("ACCESS:" + requestDto.getUserId(), result.getAccessToken(), 3, TimeUnit.HOURS);
+        redisTemplate.opsForValue().set("ACCESS:" + data.getUserId(), result.getAccessToken(), 3, TimeUnit.HOURS);
 
         return result;
     }
