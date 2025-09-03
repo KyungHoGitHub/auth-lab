@@ -1,6 +1,5 @@
 package com.example.authservice.auth;
 
-
 import com.example.authservice.config.JwtUtill;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
