@@ -53,7 +53,7 @@ server:
 
 logging:
   level:
-    root: info
-  charset:
-    console: UTF-8
-
+    root: info   # 전체 기본 레벨
+    com.example: debug # 특정 패키지만 debug
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n"
