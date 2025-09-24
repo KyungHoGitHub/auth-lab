@@ -40,6 +40,8 @@ public class AuthController {
 
     private final LoginDataFactory loginDataFactory;
 
+    private final TokenService tokenService;
+
     @PostMapping("google-login")
     public ResponseEntity<?> googleLogin(@RequestBody AuthRequestDto request){
 
@@ -265,5 +267,11 @@ public class AuthController {
     public ResponseEntity<String> createTokenPolicy(@RequestBody TokenPolicyRequestDTO requestDTO, HttpServletRequest request) {
         tokenPolicyService.createTokenPolicy(requestDTO);
         return ResponseEntity.ok("success");
+    }
+
+    @PostMapping("/temp/token")
+    public ResponseEntity<String> getTempToken(){
+        String accessToken = tokenService.getTempToken();
+        return ResponseEntity.ok(accessToken);
     }
 }

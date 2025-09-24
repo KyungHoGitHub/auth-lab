@@ -26,7 +26,13 @@ public class UserTestImpl implements UserService {
 
     @PostConstruct
     public void init() {
-        syncAllUsersToRedis();
+        try {
+            syncAllUsersToRedis();
+        }catch (Exception e) {
+                System.out.println( e.getMessage());
+                // 필요 시 대체 로직
+
+        }
     }
 
     public void syncAllUsersToRedis(){
@@ -36,6 +42,7 @@ public class UserTestImpl implements UserService {
             userInfoRedisTemplate.opsForValue().set("user:"+ user.getUserId(), userInfo,24, TimeUnit.HOURS);
         }
     }
+
     @Override
     public User createUser(UserSignUpRequestDto requestDto) {
         User users = User.builder()
