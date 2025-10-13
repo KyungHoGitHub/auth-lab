@@ -1,6 +1,8 @@
 package com.example.authservice.auth;
 
 import com.example.authservice.config.JwtUtill;
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -11,27 +13,34 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class LoginServiceImpl implements LoginService {
-    private final Map<LoginType, LoginStrategy> strategies;
-
+    private  Map<LoginType, LoginStrategy> strategies;
     private final GoogleTokenVerifier googleTokenVerifier;
-
     private final UserRepository userRepository;
     private final JwtUtill jwtUtill;
 
+    private final List<LoginStrategy> strategiesList;
     private static final Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
 
-    public LoginServiceImpl(List<LoginStrategy> strategyList, GoogleTokenVerifier googleTokenVerifier, UserRepository userRepository, JwtUtill jwtUtill) {
-        this.strategies = strategyList.stream()
+//    public LoginServiceImpl(List<LoginStrategy> strategyList, GoogleTokenVerifier googleTokenVerifier, UserRepository userRepository, JwtUtill jwtUtill) {
+//        this.strategies = strategyList.stream()
+//                .collect(Collectors.toMap(LoginStrategy::getLoginType, Function.identity()));
+//        this.googleTokenVerifier = googleTokenVerifier;
+//        this.userRepository = userRepository;
+//        this.jwtUtill = jwtUtill;
+//    }
+
+    @PostConstruct
+    public void initStrategies(){
+        this.strategies = strategiesList.stream()
                 .collect(Collectors.toMap(LoginStrategy::getLoginType, Function.identity()));
-        this.googleTokenVerifier = googleTokenVerifier;
-        this.userRepository = userRepository;
-        this.jwtUtill = jwtUtill;
     }
 
     @Override
     public AuthResponseDto login(LoginType loginType, Object data) {
         LoginStrategy strategy = strategies.get(loginType);
+
         if (strategy == null) {
             throw new IllegalArgumentException("Unknown login type: " + loginType);
         }
@@ -42,8 +51,6 @@ public class LoginServiceImpl implements LoginService {
     public AuthResponseDto processGoogleLogin(AuthRequestDto request) {
         try {
             // 1. Google 토큰 검증 및 사용자 정보 추출
-
-
             GoogleUserInfo googleUserInfo = googleTokenVerifier.verifyAccessTokenAndGetUserInfo(null);
 
             logger.info("Google login attempt for email: {}", googleUserInfo.getEmail());
@@ -53,7 +60,6 @@ public class LoginServiceImpl implements LoginService {
                     .map(exisitingUser -> updateExistingUser(exisitingUser,googleUserInfo))
                     .orElseGet(()-> createNewUser(googleUserInfo));
 
-
             // 3. JWT 토큰 생성
             String accessToken = jwtUtill.generateAccessToken(
                     user.getUsername(),
@@ -62,13 +68,9 @@ public class LoginServiceImpl implements LoginService {
                     user.getRole()
             );
 
-
             return AuthResponseDto.builder()
-
                     .accessToken(accessToken)
-
                     .build();
-
         } catch (Exception e) {
             return AuthResponseDto.builder()
                     .accessToken(null)
@@ -81,7 +83,6 @@ public class LoginServiceImpl implements LoginService {
         if (existingUser.getGoogleId() == null) {
             existingUser.setGoogleId(googleUserInfo.getGoogleId());
         }
-
 
         return userRepository.save(User.builder()
                 .loginType(LoginType.GOOGLE)

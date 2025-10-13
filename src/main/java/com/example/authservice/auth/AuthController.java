@@ -83,6 +83,7 @@ public class AuthController {
 //        }
 
         LoginType loginType = requestDto.getLoginType();
+
         Object loginData = loginDataFactory.createLoginData(requestDto);
 
          AuthResponseDto result = loginService.login(loginType , loginData);

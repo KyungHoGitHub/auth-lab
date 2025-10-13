@@ -1,6 +1,5 @@
 package com.example.authservice.config;
 
-import com.example.authservice.auth.TokenPolicy;
 import com.example.authservice.auth.TokenPolicyCacheService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -17,29 +16,21 @@ import java.util.Date;
 @RequiredArgsConstructor
 @Component
 public class JwtUtill {
-
     @Value("${jwt.secret}")
     private String secretKey;
-
     @Value("${jwt.expiration}")
     private Long expirationTime;
     private final long clockSkewSeconds = 30; // 클럭 스큐 30초 허용
-
     @Value("${jwt.refresh-expiration}")
     private Long refreshExpirationTime;
-
     private final TokenPolicyCacheService tokenPolicyCacheService;
-
-
     private final JwtProperties jwtProperties;
 
     // JWT 엑세스 토큰 생성
-    public String generateAccessToken(String username, Long userIdx, String userId,String role) {
+    public String generateAccessToken(String username, Long userIdx, String userId, String role) {
         Date now = new Date();
-
-         Long expTime = tokenPolicyCacheService.getAccessToken(1L);
+        Long expTime = tokenPolicyCacheService.getAccessToken(1L);
         Date expiryDate = new Date(now.getTime() + expTime);
-
 
         // 클레임 ( userName, useIdx, userId ) 값 세팅
         Claims claims = Jwts.claims()
@@ -84,7 +75,6 @@ public class JwtUtill {
                 .compact();
     }
 
-
     // JWT 토큰 검증
     public boolean validateToken(String token) {
         try {
@@ -106,7 +96,7 @@ public class JwtUtill {
             // 유저 이름이 필요한데 그건 리프레쉬 토큰에서
             String userName = getUsernameFromToken(refreshToken);
 
-            return generateAccessToken(refreshToken, 1L,"test","test");
+            return generateAccessToken(refreshToken, 1L, "test", "test");
 
         }
         throw new IllegalArgumentException();
