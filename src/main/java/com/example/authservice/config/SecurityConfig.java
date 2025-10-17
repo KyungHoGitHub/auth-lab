@@ -33,7 +33,9 @@ public class SecurityConfig {
             "/auth/login",
             "swagger-ui/**",
             "v3/api-docs/**",
-            "/auth/refresh"
+            "/auth/refresh",
+            "auth/all-terms",
+            "user-terms"
     };
 
     @Bean

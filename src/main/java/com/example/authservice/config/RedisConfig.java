@@ -72,7 +72,7 @@ public class RedisConfig {
         objectMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL);
         objectMapper.enable(DeserializationFeature.USE_LONG_FOR_INTS);  // 여전히 유지 가능
 
-        // Long 타입専用 시리얼라이저
+        // Long 타입;l 시리얼라이저
         Jackson2JsonRedisSerializer<Long> longSerializer = new Jackson2JsonRedisSerializer<>(objectMapper, Long.class);
 
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
