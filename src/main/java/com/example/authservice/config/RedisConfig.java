@@ -1,5 +1,6 @@
 package com.example.authservice.config;
 
+import com.example.authservice.auth.GoogleUserCache;
 import com.example.authservice.auth.User;
 import com.example.authservice.auth.UserInfo;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -61,6 +62,29 @@ public class RedisConfig {
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
         redisTemplate.setHashValueSerializer(new StringRedisSerializer());
         redisTemplate.setDefaultSerializer(new StringRedisSerializer());
+        return redisTemplate;
+    }
+
+    @Bean
+    public RedisTemplate<String, GoogleUserCache> googleUserCacheRedisTemplate() {
+        RedisTemplate<String, GoogleUserCache> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
+
+        // ObjectMapper 설정 (기존과 동일하게 유지)
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+        objectMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL);
+        objectMapper.enable(DeserializationFeature.USE_LONG_FOR_INTS);
+
+        // Jackson2JsonRedisSerializer 사용
+        Jackson2JsonRedisSerializer<GoogleUserCache> serializer = new Jackson2JsonRedisSerializer<>(objectMapper, GoogleUserCache.class);
+
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(serializer);
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashValueSerializer(serializer);
+        redisTemplate.setDefaultSerializer(new StringRedisSerializer());
+        redisTemplate.afterPropertiesSet();
         return redisTemplate;
     }
 

@@ -24,8 +24,8 @@ public class LoginDataFactory {
                 if (!data.containsKey("token")) {
                     throw new IllegalArgumentException("Missing token for GOOGLE login");
                 }
-                GoogleLoginData googleData = new GoogleLoginData();
-                googleData.setToken(data.get("token"));
+
+                GoogleOauthTokenRequest googleData = new GoogleOauthTokenRequest(data.get("token"));
                 return googleData;
             default:
                 throw new IllegalArgumentException("Unknown login type: " + loginType);
