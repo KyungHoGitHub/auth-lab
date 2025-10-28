@@ -35,7 +35,7 @@ public class SecurityConfig {
             "v3/api-docs/**",
             "/auth/refresh",
             "auth/all-terms",
-            "user-terms"
+            "user-terms/**"
     };
 
     @Bean

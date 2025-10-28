@@ -17,5 +17,7 @@ public class AuthResponseDto {
     @Schema(description = "리프레쉬 토큰", example = "aaa")
     private String refreshToken;
 
+    private String oauthEmail;
 
+    private String responseCode;
 }

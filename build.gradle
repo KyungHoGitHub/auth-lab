@@ -61,6 +61,10 @@ dependencies {
     // Google API client
     implementation 'com.google.api-client:google-api-client:2.2.0'
     implementation 'com.google.auth:google-auth-library-oauth2-http:1.19.0'
+
+    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+
 }
 
 tasks.named('test') {

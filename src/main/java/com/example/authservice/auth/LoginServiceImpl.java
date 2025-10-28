@@ -38,7 +38,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public AuthResponseDto login(LoginType loginType, Object data) {
+    public AuthResponse login(LoginType loginType, Object data) {
         LoginStrategy strategy = strategies.get(loginType);
 
         if (strategy == null) {

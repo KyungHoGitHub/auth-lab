@@ -73,7 +73,7 @@ public class AuthController {
             }
     )
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<AuthResponseDto>> login(@RequestBody AuthRequestDto requestDto ,BindingResult bindingResult) {
+    public ResponseEntity<ApiResponse<AuthResponse>> login(@RequestBody AuthRequestDto requestDto ,BindingResult bindingResult) {
 //        if (bindingResult.hasErrors()) {
 //            String errorMessage = Optional.ofNullable(bindingResult.getFieldError())
 //                    .map(FieldError::getDefaultMessage)
@@ -86,7 +86,7 @@ public class AuthController {
 
         Object loginData = loginDataFactory.createLoginData(requestDto);
 
-         AuthResponseDto result = loginService.login(loginType , loginData);
+         AuthResponse result = loginService.login(loginType , loginData);
         return ResponseEntity.ok(ApiResponse.success(result, "Token generated successfully"));
     }
 
@@ -112,6 +112,7 @@ public class AuthController {
     )
     @PostMapping("/sign/up")
     public ResponseEntity<GlobalResponse<UserResponseDto>> signUp(@RequestBody UserSignUpRequestDto requestDto) {
+
         User user = userServices.createUser(requestDto);
 
         String message = String.format("create success user id  = %s", user.getUserId());
@@ -190,7 +191,7 @@ public class AuthController {
         if (jwtUtill.validateToken(refreshToken)) {
             String username = jwtUtill.generateRefreshToken(jwtUtill.getUsernameFromToken(refreshToken));
             String updateRefreshToken = jwtUtill.generateRefreshToken(username);
-            AuthResponseDto authResponseDto = new AuthResponseDto(jwtUtill.generateAccessToken(username,1L,"test","test"), updateRefreshToken);
+            AuthResponseDto authResponseDto = new AuthResponseDto(jwtUtill.generateAccessToken(username,1L,"test","test"), updateRefreshToken,"","");
             return ResponseEntity.ok(ApiResponse.success(authResponseDto, "success"));
         }
         return ResponseEntity.badRequest().body(ApiResponse.failure("refresh token failed"));
@@ -249,6 +250,7 @@ public class AuthController {
     public String validationToken(@RequestHeader("Authorization") String token) {
         final String VALID = "TOKEN_VALID";
         final String INNVALID = "TOKEN_INVALID";
+
         // Bearer <token> 형식에서 실제 토큰만 추출
         if (token == null || !token.startsWith("Bearer ")) {
             throw new IllegalArgumentException("Invalid token");

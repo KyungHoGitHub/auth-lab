@@ -10,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -94,5 +95,15 @@ public class UserTestImpl implements UserService {
                  .toList();
 
         return response;
+    }
+
+    @Override
+    public User createOauthUser(User user) {
+        return userRepository.save(user);
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 }

@@ -2,10 +2,7 @@ package com.example.authservice.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RequestMapping
@@ -13,10 +10,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserTermsController {
     private final UserTermsService userTermsService;
 
-    @PostMapping("user-terms")
-    public ResponseEntity<String> createUserTerms(@RequestBody UserTermsRequestDTO requestDTO) {
-            userTermsService.userTermsCreate(requestDTO);
+    @PostMapping("user-terms/{userEmail}")
+    public ResponseEntity<AuthResponseDto> createUserTerms(@PathVariable String userEmail, @RequestBody UserTermsRequestDTO requestDTO) {
+            userTermsService.userTermsCreate(requestDTO,userEmail);
 
-        return ResponseEntity.ok("Success");
+            AuthResponseDto responseDTO = new AuthResponseDto();
+            responseDTO.setAccessToken("eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhYmFiIiwiaWF0IjoxNzUwOTA0MTc5LCJleHAiOjE3NTA5MTEzNzl9.f9gWmn-uLYDz1vvBUJNC6q-8N2XwzADi_CALec1eGlEyjXttDK8JJZpKUTJUd3sO");
+        return ResponseEntity.ok(responseDTO);
     }
 }

@@ -27,7 +27,6 @@ public class User implements UserDetails {
     @Column(name = "user_id")
     String userId;
 
-
     String username;
 
     String email;
@@ -48,6 +47,10 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();
     }
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Builder.Default
+    List<OauthAccounts> oauthAccounts = new ArrayList<>();
 
 
 //    @Override

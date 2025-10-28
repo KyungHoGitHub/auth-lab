@@ -1,7 +1,7 @@
 package com.example.authservice.auth;
 
 public interface LoginStrategy {
-    AuthResponseDto login(Object requestDto);
+    AuthResponse login(Object requestDto);
 
     LoginType getLoginType();
 }
